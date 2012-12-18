@@ -9,7 +9,7 @@ import java.io.IOException;
  * An observer implementation that checks for new URL records and
  * asynchronously fetches some into about it.
  */
-public class FetchUrlInfoObserver extends BaseRegionObserver
+public abstract class FetchUrlInfoObserver extends BaseRegionObserver
   implements RegionObserver, FetchUrlInfoProtocol {
 
 
@@ -25,8 +25,4 @@ public class FetchUrlInfoObserver extends BaseRegionObserver
   public void updateUrlMD5(String urlMD5) throws IOException {
   }
 
-  @Override
-  public long getProtocolVersion(String s, long l) throws IOException {
-    return 1L;
-  }
 }

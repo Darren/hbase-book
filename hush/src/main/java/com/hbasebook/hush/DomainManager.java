@@ -1,24 +1,17 @@
 package com.hbasebook.hush;
 
+import com.hbasebook.hush.model.ShortDomain;
+import com.hbasebook.hush.table.LongDomainTable;
+import com.hbasebook.hush.table.ShortDomainTable;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.util.Bytes;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.util.Bytes;
-
-import com.hbasebook.hush.model.ShortDomain;
-import com.hbasebook.hush.table.LongDomainTable;
-import com.hbasebook.hush.table.ShortDomainTable;
 
 public class DomainManager {
   private final Log LOG = LogFactory.getLog(DomainManager.class);
@@ -58,7 +51,7 @@ public class DomainManager {
    * @throws IOException
    */
   public List<ShortDomain> listShortDomains() throws IOException {
-    HTable table = null;
+    HTableInterface table = null;
 
     List<ShortDomain> domains = new ArrayList<ShortDomain>();
 
@@ -95,8 +88,8 @@ public class DomainManager {
    */
   public void addLongDomain(String shortDomain, String longDomain)
       throws IOException {
-    HTable shortTable = rm.getTable(ShortDomainTable.NAME);
-    HTable longTable = rm.getTable(LongDomainTable.NAME);
+    HTableInterface shortTable = rm.getTable(ShortDomainTable.NAME);
+    HTableInterface longTable = rm.getTable(LongDomainTable.NAME);
 
     try {
       byte[] shortBytes = Bytes.toBytes(shortDomain);
@@ -129,8 +122,8 @@ public class DomainManager {
    * @throws IOException
    */
   public void deleteLongDomain(String longDomain) throws IOException {
-    HTable shortTable = rm.getTable(ShortDomainTable.NAME);
-    HTable longTable = rm.getTable(LongDomainTable.NAME);
+    HTableInterface shortTable = rm.getTable(ShortDomainTable.NAME);
+    HTableInterface longTable = rm.getTable(LongDomainTable.NAME);
 
     try {
       byte[] longBytes = Bytes.toBytes(longDomain);
@@ -161,8 +154,8 @@ public class DomainManager {
    * @throws IOException
    */
   public void deleteShortDomain(String shortDomain) throws IOException {
-    HTable shortTable = rm.getTable(ShortDomainTable.NAME);
-    HTable longTable = rm.getTable(LongDomainTable.NAME);
+    HTableInterface shortTable = rm.getTable(ShortDomainTable.NAME);
+    HTableInterface longTable = rm.getTable(LongDomainTable.NAME);
 
     try {
       byte[] shortBytes = Bytes.toBytes(shortDomain);
@@ -204,7 +197,7 @@ public class DomainManager {
    * @throws IOException
    */
   public String shorten(String longDomain) throws IOException {
-    HTable longTable = rm.getTable(LongDomainTable.NAME);
+    HTableInterface longTable = rm.getTable(LongDomainTable.NAME);
 
     try {
       Result result = longTable.get(new Get(Bytes.toBytes(longDomain)));

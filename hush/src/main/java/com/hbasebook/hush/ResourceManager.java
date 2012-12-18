@@ -1,18 +1,17 @@
 package com.hbasebook.hush;
 
+import com.maxmind.geoip.Country;
+import com.maxmind.geoip.LookupService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.client.HTableInterface;
+import org.apache.hadoop.hbase.client.HTablePool;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.HTablePool;
-
-import com.maxmind.geoip.Country;
-import com.maxmind.geoip.LookupService;
 
 /**
  * This class is implemented as a Singleton, i.e., it is shared across the
@@ -136,8 +135,8 @@ public class ResourceManager {
    * @throws IOException When talking to HBase fails.
    */
   // vv HushHTablePoolProvider
-  public HTable getTable(byte[] tableName) throws IOException {
-    return (HTable) pool.getTable(tableName);
+  public HTableInterface getTable(byte[] tableName) throws IOException {
+    return (HTableInterface) pool.getTable(tableName);
   }
 
   // ^^ HushHTablePoolProvider
@@ -150,7 +149,7 @@ public class ResourceManager {
    * @param table The table reference to return to the pool.
    */
   // vv HushHTablePoolProvider
-  public void putTable(HTable table) throws IOException {
+  public void putTable(HTableInterface table) throws IOException {
     if (table != null) {
       pool.putTable(table);
     }

@@ -28,7 +28,12 @@ if [ ! -f "${cpfile}" ]; then
 fi
 CLASSPATH=${CLASSPATH}:`cat "${cpfile}"`
 
-JAVA=$JAVA_HOME/bin/java
+if [ "$JAVA_HOME" != "" ]; then
+  JAVA=$JAVA_HOME/bin/java
+else
+  JAVA=java
+fi
+
 JAVA_HEAP_MAX=-Xmx512m
 
 echo "====================="
@@ -36,4 +41,4 @@ echo " Starting Hush..."
 echo "====================="
 
 cd ${bin}/..
-"$JAVA" $JAVA_HEAP_MAX -classpath "$CLASSPATH" com.hbasebook.hush.HushMain
+"$JAVA" $JAVA_HEAP_MAX -Duser.language=en -classpath "$CLASSPATH" com.hbasebook.hush.HushMain

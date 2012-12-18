@@ -1,22 +1,5 @@
 package com.hbasebook.hush;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Increment;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.util.Bytes;
-
 import com.hbasebook.hush.model.LongUrl;
 import com.hbasebook.hush.model.ShortUrl;
 import com.hbasebook.hush.servlet.RequestInfo;
@@ -24,6 +7,16 @@ import com.hbasebook.hush.table.HushTable;
 import com.hbasebook.hush.table.LongUrlTable;
 import com.hbasebook.hush.table.ShortUrlTable;
 import com.hbasebook.hush.table.UserShortUrlTable;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.util.Bytes;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UrlManager {
   private final Log LOG = LogFactory.getLog(UrlManager.class);
@@ -49,7 +42,7 @@ public class UrlManager {
    * @throws IOException
    */
   private void initializeShortIdCounter() throws IOException {
-    HTable table = rm.getTable(HushTable.NAME);
+    HTableInterface table = rm.getTable(HushTable.NAME);
     try {
       Put put = new Put(HushTable.GLOBAL_ROW_KEY);
       byte[] value = Bytes.toBytes(HushUtil.hushDecode("0337"));
@@ -130,7 +123,7 @@ public class UrlManager {
   private String addLongUrl(String domain, String url, String username)
     throws IOException {
     ResourceManager manager = ResourceManager.getInstance();
-    HTable table = manager.getTable(LongUrlTable.NAME);
+    HTableInterface table = manager.getTable(LongUrlTable.NAME);
     byte[] md5Url = DigestUtils.md5(url);
     Put put = new Put(md5Url);
     put.add(LongUrlTable.DATA_FAMILY, LongUrlTable.URL,
@@ -158,7 +151,7 @@ public class UrlManager {
    * @throws IOException When saving the record fails.
    */
   private void createShortUrl(ShortUrl shortUrl) throws IOException {
-    HTable table = rm.getTable(ShortUrlTable.NAME);
+    HTableInterface table = rm.getTable(ShortUrlTable.NAME);
     Put put = new Put(Bytes.toBytes(shortUrl.getId()));
     put.add(ShortUrlTable.DATA_FAMILY, ShortUrlTable.URL,
       Bytes.toBytes(shortUrl.getLongUrl()));
@@ -187,7 +180,7 @@ public class UrlManager {
    */
   private void createUserShortUrl(String username, String shortId)
     throws IOException {
-    HTable table = rm.getTable(UserShortUrlTable.NAME);
+    HTableInterface table = rm.getTable(UserShortUrlTable.NAME);
     byte[] rowKey = Bytes.add(Bytes.toBytes(username), ResourceManager.ZERO,
       Bytes.toBytes(shortId));
     Put put = new Put(rowKey);
@@ -210,7 +203,7 @@ public class UrlManager {
       return null;
     }
 
-    HTable table = rm.getTable(ShortUrlTable.NAME);
+    HTableInterface table = rm.getTable(ShortUrlTable.NAME);
 
     Get get = new Get(Bytes.toBytes(shortId));
     get.addColumn(ShortUrlTable.DATA_FAMILY, ShortUrlTable.URL);
@@ -256,7 +249,7 @@ public class UrlManager {
    * @throws IOException When loading the URL fails.
    */
   private LongUrl getLongUrl(String longUrl) throws IOException {
-    HTable table = rm.getTable(LongUrlTable.NAME);
+    HTableInterface table = rm.getTable(LongUrlTable.NAME);
 
     byte[] md5Url = DigestUtils.md5(longUrl);
     Get get = new Get(md5Url);
@@ -296,7 +289,7 @@ public class UrlManager {
    */
   private String generateShortId(long incrBy) throws IOException {
     ResourceManager manager = ResourceManager.getInstance();
-    HTable table = manager.getTable(HushTable.NAME);
+    HTableInterface table = manager.getTable(HushTable.NAME);
     try {
       Increment increment = new Increment(HushTable.GLOBAL_ROW_KEY);
       increment.addColumn(HushTable.COUNTERS_FAMILY, HushTable.SHORT_ID,
@@ -319,7 +312,7 @@ public class UrlManager {
 
   private List<String> getShortUrlIdsByUser(String username)
     throws IOException {
-    HTable table = rm.getTable(UserShortUrlTable.NAME);
+    HTableInterface table = rm.getTable(UserShortUrlTable.NAME);
 
     byte[] startRow = Bytes.toBytes(username);
     byte[] stopRow = Bytes.add(startRow, ResourceManager.ONE);

@@ -13,10 +13,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Increment;
-import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import com.hbasebook.hush.model.ColumnQualifier;
@@ -78,7 +75,7 @@ public class Counters {
       country = rm.getCountry(info.get(RequestInfo.InfoName.RemoteAddr));
     }
     // increment user statistics
-    HTable table = rm.getTable(ShortUrlTable.NAME);
+    HTableInterface table = rm.getTable(ShortUrlTable.NAME);
     byte[] rowKey = Bytes.toBytes(shortId);
     Increment increment = new Increment(rowKey);
     increment.addColumn(ShortUrlTable.DATA_FAMILY, ShortUrlTable.CLICKS,
@@ -176,7 +173,7 @@ public class Counters {
   public ShortUrlStatistics getDailyStatistics(ShortUrl shortUrl, int maxValues,
     double normalize) throws IOException {
     ResourceManager manager = ResourceManager.getInstance();
-    HTable table = manager.getTable(ShortUrlTable.NAME);
+    HTableInterface table = manager.getTable(ShortUrlTable.NAME);
 
     // get short Id usage data
     byte[] rowKey = Bytes.toBytes(shortUrl.getId());

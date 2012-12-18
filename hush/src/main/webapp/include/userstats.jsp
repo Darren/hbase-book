@@ -37,6 +37,7 @@
       int rowNum = 0;
         for (ShortUrlStatistics stat : stats) {
           rowNum++;
+          if(stat !=null) {
           ShortUrl shortUrl = stat.getShortUrl() ;
           String url = shortUrl.toString();
           String detailsUrl = url + "+";
@@ -49,6 +50,7 @@
             }
             sparkData.append(counter.getValue());
           }
+
     %>
     <tr>
       <td class="rowNum"><%=rowNum%></td>
@@ -60,6 +62,7 @@
       </td>
     </tr>
     <%
+      }
       }
     %>
     </tbody>

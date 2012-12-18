@@ -45,7 +45,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.build.outputEncoding>UTF-8</project.build.outputEncoding>
     <jetty.version>7.3.1.v20110307</jetty.version>
-    <hbase.version>0.91.0-SNAPSHOT</hbase.version>
+    <hbase.version>0.92.1-cdh4.1.2</hbase.version>
   </properties>
 
   <build>
@@ -76,6 +76,11 @@
   </build>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>2.0.0-cdh4.1.2</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.hbase</groupId>
       <artifactId>hbase</artifactId>
